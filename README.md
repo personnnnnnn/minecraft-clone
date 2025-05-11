@@ -1,3 +1,5 @@
 # To do:
 
-- [ ] Add items to "to do" list
+- &check; Chunks
+- &check; Basic terrain generation
+- &cross; Dynamic chunk generation (handling entire worlds)

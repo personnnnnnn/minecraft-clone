@@ -1,6 +1,24 @@
-import { BLOCK_SIZE } from "./constants";
-import { Chunk } from "./logic/chunk/chunk";
+import { BLOCK_SIZE, CHUNK_LENGTH } from "./constants";
+import { World } from "./logic/world/world";
 import Vector2 from "./util/vector2";
+
+export type Bounds = {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+};
+
+export function chunkify(bounds: Bounds): Bounds {
+  let { left, right, top, bottom } = bounds;
+
+  left = Math.floor(left / CHUNK_LENGTH) - 1;
+  right = Math.ceil(right / CHUNK_LENGTH) + 1;
+  top = Math.ceil(top / CHUNK_LENGTH) + 2;
+  bottom = Math.floor(bottom / CHUNK_LENGTH) - 1;
+
+  return { left, right, top, bottom };
+}
 
 export class GameManager {
   ctx: CanvasRenderingContext2D = this.canvas.getContext("2d")!;
@@ -12,7 +30,7 @@ export class GameManager {
 
   scaleFactor: number = BLOCK_SIZE;
 
-  chunk: Chunk = new Chunk(0, 0);
+  world: World = new World();
 
   get framerate(): number {
     return this.#framerate;
@@ -60,6 +78,16 @@ export class GameManager {
     return this.canvasHeight / this.scaleFactor;
   }
 
+  getRenderBounds(): Bounds {
+    const left = this.player.x - this.width / 2;
+    const right = this.player.x + this.width / 2;
+
+    const top = this.player.y - this.height / 2;
+    const bottom = this.player.y + this.height / 2;
+
+    return { left, right, top, bottom };
+  }
+
   step(): void {
     this.update();
     this.draw();
@@ -70,16 +98,33 @@ export class GameManager {
     this.ctx.resetTransform();
     this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 
+    this.ctx.translate(this.canvasWidth / 2, this.canvasHeight / 2);
     this.ctx.scale(this.scaleFactor, this.scaleFactor);
 
-    this.ctx.translate(-this.player.x, -this.player.y);
+    this.ctx.translate(-this.player.x, this.player.y);
   }
 
   draw(): void {
     this.transformations();
 
-    this.chunk.draw(this.ctx);
+    const bounds = this.getRenderBounds();
+    const chunkBounds = chunkify(bounds);
+    this.world.loadChunksInBounds(this.getRenderBounds());
+
+    for (let x = chunkBounds.left; x <= chunkBounds.right; x++) {
+      for (let y = chunkBounds.bottom; y <= chunkBounds.top; y++) {
+        const pos = new Vector2(x, y);
+        const chunk = this.world.getChunkAt(pos);
+        if (!chunk) {
+          continue;
+        }
+        chunk.draw(this.ctx);
+      }
+    }
   }
 
-  update(): void {}
+  update(): void {
+    this.player.x += 0.1;
+    this.player.y -= 0.1;
+  }
 }
