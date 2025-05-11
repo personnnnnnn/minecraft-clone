@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/node": "^22.15.17",
     "sass": "^1.88.0",
     "sass-loader": "^16.0.5",
     "ts-loader": "^9.5.2",

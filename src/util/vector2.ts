@@ -1,4 +1,4 @@
-export class Vector2 {
+export default class Vector2 {
   constructor(public x: number = 0, public y: number = x) {}
 
   applySingle(f: (a: number) => number): Vector2 {

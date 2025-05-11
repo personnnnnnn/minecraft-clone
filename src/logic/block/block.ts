@@ -19,7 +19,7 @@ export type BlockData = {
   displayName?: string;
 };
 
-const blockData: { [key: number]: BlockData } = {};
+export const blockData: { [key: number]: BlockData } = {};
 
 export function getBlockData(id: number): BlockData {
   return blockData[id];
