@@ -67,10 +67,6 @@ export class GameManager {
 
   draw(): void {
     this.transformations();
-
-    // test rect
-    this.ctx.fillStyle = "red";
-    this.ctx.fillRect(1, 1, 1, 1);
   }
 
   update(): void {}
