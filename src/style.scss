@@ -8,4 +8,5 @@ body, html, #canvas {
 #canvas {
   background: white;
   display: block;
+  image-rendering: pixelated;
 }
